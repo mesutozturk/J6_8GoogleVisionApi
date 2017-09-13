@@ -14,7 +14,7 @@ import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final int RC_CAMERA = 100;
+    private static final int RC_CAMERA = 100, RC_PHONE = 20;
     TextView txtCode;
     Button btnTara;
 
@@ -30,6 +30,12 @@ public class MainActivity extends AppCompatActivity {
         if (ActivityCompat.checkSelfPermission(MainActivity.this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.CAMERA}, RC_CAMERA);
         }
+        if (ActivityCompat.checkSelfPermission(MainActivity.this, android.Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+            Toast.makeText(MainActivity.this, "Arama yetkiniz yok", Toast.LENGTH_SHORT).show();
+
+            ActivityCompat.requestPermissions(MainActivity.this, new String[]{Manifest.permission.CALL_PHONE}, RC_PHONE);
+            return;
+        }
     }
 
     @Override
@@ -38,6 +44,10 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == RC_CAMERA) {
             if (grantResults[0] != PackageManager.PERMISSION_GRANTED)
                 Toast.makeText(this, "Kamera izni vermelisiniz!", Toast.LENGTH_LONG).show();
+        }
+        if (requestCode == RC_PHONE) {
+            if (grantResults[0] != PackageManager.PERMISSION_GRANTED)
+                Toast.makeText(this, "Arama izni vermelisiniz!", Toast.LENGTH_LONG).show();
         }
     }
 

@@ -1,7 +1,9 @@
 package com.mstztrk.j6_8googlevisionapi;
 
 import android.Manifest;
+import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -37,6 +39,7 @@ public class ScannerActivity extends AppCompatActivity {
                 .setBarcodeFormats(Barcode.ALL_FORMATS)
                 .build();
         barcodeDetector.setProcessor(new Detector.Processor<Barcode>() {
+
             @Override
             public void release() {
 
@@ -47,7 +50,18 @@ public class ScannerActivity extends AppCompatActivity {
                 final SparseArray<Barcode> barcodes = detections.getDetectedItems();
                 if (barcodes.size() != 0) {
                     final String barcodeStr = barcodes.valueAt(0).displayValue;
+                    int format = barcodes.valueAt(0).format;
                     Log.i("barcode", barcodeStr);
+                    if (format == Barcode.QR_CODE && barcodes.valueAt(0).phone != null) {
+                        Intent intent = new Intent(Intent.ACTION_CALL);
+                        intent.setData(Uri.parse("tel:" + barcodeStr));
+
+                        if (ActivityCompat.checkSelfPermission(ScannerActivity.this, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
+                            return;
+                        }
+                        ScannerActivity.this.startActivity(intent);
+                    }
+
                 }
             }
         });
