@@ -16,6 +16,8 @@ import com.google.android.gms.vision.CameraSource;
 import com.google.android.gms.vision.Detector;
 import com.google.android.gms.vision.barcode.Barcode;
 import com.google.android.gms.vision.barcode.BarcodeDetector;
+import com.google.android.gms.vision.text.TextBlock;
+import com.google.android.gms.vision.text.TextRecognizer;
 
 import java.io.IOException;
 
@@ -65,8 +67,27 @@ public class ScannerActivity extends AppCompatActivity {
                 }
             }
         });
+        TextRecognizer textRecognizer = new TextRecognizer.Builder(ScannerActivity.this).build();
+        textRecognizer.setProcessor(new Detector.Processor<TextBlock>() {
+            @Override
+            public void release() {
+
+            }
+
+            @Override
+            public void receiveDetections(Detector.Detections<TextBlock> detections) {
+                SparseArray<TextBlock> items = detections.getDetectedItems();
+                for (int i = 0; i < items.size(); ++i) {
+                    TextBlock item = items.valueAt(i);
+                    if (item != null && item.getValue() != null) {
+                        Log.e("x", item.getValue());
+                    }
+                }
+            }
+        });
         cameraSource = new CameraSource
-                .Builder(ScannerActivity.this, barcodeDetector)
+                //.Builder(ScannerActivity.this, barcodeDetector)
+                .Builder(ScannerActivity.this, textRecognizer)
                 .setFacing(CameraSource.CAMERA_FACING_BACK)
                 .setRequestedFps(35.0f)
                 .setAutoFocusEnabled(true)
